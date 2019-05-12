@@ -1,0 +1,64 @@
+/* 
+    Equipe: 
+        Kaio Yuri Lopes de Araújo - A (Líder) 
+        Jaíslla Macêdo da Silva  - C 
+        Etapa 3 e 4
+*/
+var tiro = false;
+
+function setup() {
+  createCanvas(400, 400);
+  
+xc=30;
+yc=350;
+xs = 0;
+ys = 0;
+ 
+}
+
+
+function draw() {
+  background(400);
+  rect(20, 20, 80, 80);
+  fill(250, 0, 0);
+  ellipse(xc, yc, 35, 35);
+  fill(0,0,255)
+  if (keyIsDown(RIGHT_ARROW))
+  xc=xc+7;
+  if (keyIsDown(LEFT_ARROW))
+  xc=xc-7;
+  if (keyIsDown(UP_ARROW))
+  yc=yc-7;
+  if (keyIsDown(DOWN_ARROW))
+  yc=yc+7;
+  if( xc >400 ){
+     xc = 0;
+    
+     }
+   if( xc < 0 ){
+     xc = 400;
+    
+     }
+   if( yc > 400 ){
+     yc = 0;
+    
+     }
+   if( yc <0 ){
+     yc = 400;
+    
+     }
+  if(keyIsDown(CONTROL) && tiro == false){
+     xs = xc
+     ys = yc
+    tiro = true
+     }
+  
+  if(tiro){   
+  ellipse(xs,ys, 5,5);
+  xs = xs + 5;
+  if(xs > 400){
+    tiro = false;
+  }
+  }
+  
+}
