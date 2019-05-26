@@ -1,0 +1,144 @@
+/* 
+    Equipe: 
+        Kaio Yuri Lopes de Araújo - A (Líder) 
+        Jaíslla Macêdo da Silva  - C 
+        Etapa 7 e 8
+*/
+var tiro = false;
+var vidas = 3;
+var pontos = 0;
+var nivel = 1;
+var LimitePontos = 1000;
+var Vxo = [];
+var Vyo = [];
+var obj = 10;
+
+
+function setup() {
+  createCanvas(400, 400);
+  
+xc=30;
+yc=350;
+xs = 0;
+ys = 0;
+x2 = 300;
+y2= 350;
+raio1 = 30;
+raio2 = 30;
+Vxo = [];
+Vyo = [];
+  
+for(var i = 0; i<obj; i++){
+  Vxo[i] = random( 30 ,270);
+  Vyo[i] = random( 0 ,300);
+  } 
+}
+
+
+function draw() {
+  
+  background(300);
+  
+ 
+  
+  /*Abaixo o nome vida e sua variavel mostrando a quantidade de vidas.*/
+  strokeWeight(0);
+textSize(20);
+textStyle(BOLDITALIC);
+text('Vidas', 10, 15);
+  
+rect(1, 1, 1,1);
+  textSize(20);
+textStyle(BOLDITALIC);
+text(vidas, 30, 36);
+   
+  /*   Abaixo o nome pontuação e nivel mostrando respectiva variavel em relação ao mesmo. */
+    textSize(20);
+textStyle(BOLDITALIC);
+text('Pontuação', 300, 15);
+    textSize(20);
+textStyle(BOLDITALIC);
+text(pontos, 300, 35);
+  
+  textSize(20);
+textStyle(BOLDITALIC);
+text('Nivel', 150, 15);
+    textSize(20);
+textStyle(BOLDITALIC);
+text(nivel, 150, 35);
+  
+    /*   Abaixo comando de movimentos dos objetos */
+  
+  
+  fill(250, 0, 0);
+  ellipse(xc, yc, 2*raio1, 2*raio2);
+  fill(0,0,255)
+  if (keyIsDown(RIGHT_ARROW))
+  xc=xc+7;
+  if (keyIsDown(LEFT_ARROW))
+  xc=xc-7;
+  if (keyIsDown(UP_ARROW))
+  yc=yc-7;
+  if (keyIsDown(DOWN_ARROW))
+  yc=yc+7;
+  
+  /* Abaixo codigo que limita movimento do objeto principal */
+  
+  if( xc >400 ){
+     xc = 0;
+    
+     }
+   if( xc < 0 ){
+     xc = 400;
+    
+     }
+   if( yc > 400 ){
+     yc = 0;
+    
+     }
+   if( yc <0 ){
+     yc = 400;
+    
+     }
+  
+  /* Abaixo comando de arremeço de objeto*/ 
+  
+  if(keyIsDown(CONTROL) && tiro == false){
+     xs = xc
+     ys = yc
+    tiro = true
+     }
+  
+  if(tiro){   
+  ellipse(xs,ys, 5,5);
+  xs = xs + 5;
+  if(xs > 400){
+    tiro = false;
+  }
+    
+  }
+  /* Abaixo comando sobre mudança dos valores de variaveis vida e pontuação */
+  
+  fill(70)
+  ellipse(x2, y2, 70, 70)
+  if(dist(xc,yc, x2,y2) <  raio1 + raio2){
+   vidas  = vidas - 1;
+    xc = 30;
+    yc = 350;
+         }
+  
+  if (dist(xs, ys, x2,y2) <  raio1 + raio2){
+    pontos = pontos + 10;
+    
+    }
+  if (pontos>LimitePontos) {
+    nivel=nivel+1;
+    LimitePontos = LimitePontos + 1000; 
+  }
+    /*
+  
+    Abaixo comando sobre quantidade de objetos {*/
+   for( var i = 0; i< obj; i++){
+          fill (100)
+          ellipse(Vxo[i], Vyo[i], 20, 20)
+   }}
