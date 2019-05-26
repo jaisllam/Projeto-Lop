@@ -134,6 +134,7 @@ text(nivel, 150, 35);
   if (pontos>LimitePontos) {
     nivel=nivel+1;
     LimitePontos = LimitePontos + 1000; 
+    vidas = vidas + 2;
   }
     /*
   
