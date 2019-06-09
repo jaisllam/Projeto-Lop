@@ -1,0 +1,469 @@
+/* 
+    Equipe: 
+        Kaio Yuri Lopes de Araújo - A (Líder) 
+        Jaíslla Macêdo da Silva  - C 
+        Etapa 9 e 10
+*/
+
+var x = -20//variável x do Bônus
+var y = -20//variável y do Bônus
+var aux = 0;// auxiliar para a aparição do bônus
+var n = 0;// auxiliar
+
+var vidas = 5; // Vidas do personagem
+var pontos= 0; // pontuação
+var ContPontos=1; // Variável definida para controlar mudança de telas
+var tiro = false; // Variável para disparar projéteis
+var tela = 1; // Variável para mudança de tela
+var nivel = 1; // Variável para nível
+var LimitePontos = 1000 //variável para mudança de Nível
+
+var anima; //Variavel para animação de abertura
+var anima2; 
+
+var anima3; //Variavel para animação de finalização
+var imgsAbertura = []; // vetor para frames de abertura
+var imgsFinal = []; // vetor para frames de finalização
+var imgsEstudante = [];
+var imgsAndando = [];
+var contFrame = 1; //contador de frames
+var contFrame2 = 0; 
+
+var enemy_quant= 10;//quantidade de inimigos
+var yenemy = [] // vetor y de posição dos ataques
+var xenemy = [] // vetor x de posição dos ataques
+var enemyVel=3 // velocidade do inimigo
+
+function setup() {
+  createCanvas(400, 400);
+  frameRate(50)
+xc=30; // posição inicial do personagem no eixo X
+yc=350;// posição inicial do personagem no eixo y
+xs = 0; // posição inicial do tiro no eixo X
+ys = 0; // posição inicial do tiro no eixo Y
+x2 = 350; // posição do inimigo (vulgo prova), no eixo X
+y2= 200; // posição do inimigo (vulgo prova), no eixo Y
+raio1 = 20; // Variável para colisão da prova
+raio2 = 60;// Variável para colisão da prova
+xobj = []
+yobj = []
+for (var i=0; i <1; i++) {
+    xobj[i] = random (10,350)
+    yobj[i] = random (10,350)
+}
+  
+for (i=0; i <enemy_quant; i++) { 
+  	xenemy[i] = random(0,400);
+  	yenemy[i] = -random(0,400); 
+  }
+}
+
+
+let imgLivro;
+let imgProva;
+let imgAtaque;
+let imgVidas;
+
+function preload() {
+  imgProva = loadImage('Prova_PC.png');
+  imgLivro = loadImage('Livro.png');
+  imgAtaque = loadImage('Ataque.png');
+  imgVidas = loadImage('vidas-2.png');
+  imgsEstudante = loadImage("protagon_0.png");
+  
+  for(i=1; i<15; i++){
+  imgsFinal[i] = loadImage("final_"+i+".png");
+  }
+
+   for (i = 1; i < 15; i++) {
+    imgsAbertura[i] = loadImage("abertura_"+i+".png");
+  }
+  for (i = 0; i < 4; i++) {
+    imgsAndando[i] = loadImage("protagon_"+i+".png");
+  }
+}
+
+function draw() {
+  
+  //-----------    criação da tela incial.    ---------------
+  if ( tela == 1) {
+    background(0);
+    noStroke()
+    anima = imgsAbertura[contFrame];
+  image( anima, 0, 0);
+  contFrame++;
+  if ( contFrame > 14 ) {
+     contFrame = 1;
+  }
+    fill(100);
+textSize(20);
+textStyle(BOLDITALIC);
+text('Pressione enter para começar', 50, 325);
+    
+    textSize(15);
+textStyle(BOLDITALIC);
+text('By: Jaíslla Macêdo e Kaio Yuri', 5, 395);
+    
+    if (keyIsDown(ENTER) ) {
+       tela = 2;  
+    }
+  }
+    //criação da tela, suas cores e texto representando a vida
+  
+if (tela==2){
+  background(0);
+  strokeWeight(0);
+textSize(20);
+textStyle(BOLDITALIC);
+text('Vidas', 10, 15);
+  
+    //-----quadrado que irá receber sprite de vida--------
+  rect(1, 1, 1,1);
+  textSize(20);
+textStyle(BOLDITALIC);
+text(vidas, 30, 36);
+    // -------- Criação de pontuação --------
+  textSize(20);
+textStyle(BOLDITALIC);
+text('Pontuação', 300, 15);
+    textSize(20);
+textStyle(BOLDITALIC);
+text(pontos, 300, 35);
+    textSize(20);
+textStyle(BOLDITALIC);
+text('Prova', 150, 15);
+    textSize(20);
+textStyle(BOLDITALIC);
+text(nivel, 150, 35);
+  
+   /* 
+-------criação do circulo, movimentação e imagem representativa---
+*/
+  
+  fill(250, 0, 0);
+  noStroke()
+  ellipse(xc, yc, 12, 12);
+  imageMode(CENTER)
+  image( imgsEstudante, xc, yc);
+  fill(0,0,255)
+  if (keyIsDown(RIGHT_ARROW))
+  xc=xc+7;
+  if (keyIsDown(LEFT_ARROW))
+  xc=xc-7;
+  if (keyIsDown(UP_ARROW))
+  yc=yc-7;
+  if (keyIsDown(DOWN_ARROW))
+  yc=yc+7;
+  /* 
+ ---------   Aparecer do outro lado pós sua saída  --------
+*/
+  if( xc >400 ){
+     xc = 0;
+    
+     }
+   if( xc < 0 ){
+     xc = 0;
+    
+     }
+   if( yc > 400 ){
+     yc = 0;
+    
+     }
+   if( yc <0 ){
+     yc = 400;
+    
+     }
+// ------------- Ataque inimigo ----------------
+  fill(200);
+  for (var i=0; i<enemy_quant; i++) {
+  	//ellipse(xenemy[i], yenemy[i], 15, 15);
+    imageMode(CENTER)
+    image(imgAtaque, xenemy[i],yenemy[i])
+  	yenemy[i]=yenemy[i]+enemyVel; 
+    if ( yenemy[i] > 400 ){ 
+      xenemy[i] =  random(0,400);
+      yenemy[i] = -random(0,400);
+    }
+  }
+  
+  for(j=0;j<enemy_quant;j++){
+		if(dist( xc, yc , xenemy[j], yenemy[j]) <= 20){
+			vidas = vidas -1;
+			yenemy[j] = -random(height);
+			xenemy[j] = random(0,600);		
+		}
+	}
+  if(pontos===1000){
+  enemyVel=enemyVel+2
+    pontos++
+  }
+    if(pontos===2000){
+  enemyVel=enemyVel+20
+    pontos++
+  }
+    if(pontos===3000){
+  enemyVel=enemyVel+2
+    pontos++
+  }
+    if(pontos===4000){
+  enemyVel=enemyVel+2
+    pontos++
+  }
+// --------------- Bônus -----------------
+if(aux < 100){
+  aux++
+}
+if(aux >= 100 && n == 0){
+  x = random(0, 270)
+  y = random(15, 350)
+  n = 1
+}
+  
+//rect(x, y, 20, 20)
+  imageMode(CENTER)
+  image(imgVidas, x,y)
+  if(dist(xc,yc,x,y)<=20){
+   vidas=vidas+1
+    aux=0
+    x = random(0, 270)
+    y = random(15, 350)
+  }
+  
+  
+  
+// ----------   lançamento de projeteis   --------------
+  if(keyIsDown(CONTROL) && tiro == false){
+     xs = xc
+     ys = yc
+    tiro = true
+     }
+  
+     
+  if(tiro){   
+  ellipse(xs,ys, 5,5);
+  image(imgLivro, xs,ys)
+  xs = xs + 18;
+  if(xs > 400 || xs==x2){
+    tiro = false;
+  }
+  }
+    
+    /*  */
+  fill(70)
+  //ellipse(x2, y2, 2*raio1, 2*raio2);
+  imageMode(CENTER)
+  image(imgProva, x2,y2)
+  if(dist(xc,yc, x2,y2) <  raio1 + raio2){
+   vidas  = vidas - 1;
+    xc = 30;
+    yc = 350;
+         }
+  
+  if (dist(xs, ys, x2,y2) <  raio1 + raio2 && tiro==true){
+    pontos = pontos + 10;
+    tiro=false
+    }
+  if (pontos>LimitePontos) {
+    nivel=nivel+1;
+    LimitePontos = LimitePontos + 1000; 
+  }
+//criação da tela final quando a vida do personagem chegar a 0
+
+  }
+  
+  if(vidas==0){
+  tela=3
+  }
+  
+  if (tela==3) {
+    background(0);
+    anima2 = imgsFinal[contFrame];
+  image( anima2, 200, 200);
+  contFrame++;
+  if ( contFrame > 14 ) {
+     contFrame = 1;
+    } 
+    textSize(20);
+textStyle(BOLDITALIC);
+text('Pontuação final:', 50, 300);
+    textSize(20);
+textStyle(BOLDITALIC);
+text(pontos, 100, 330);
+  }
+  //----------- Tela de Vitória --------
+    if ( ContPontos>5) {
+     tela=4
+    background(0);
+    textSize(30); 
+    fill(135,206,235);
+    text("Você foi Aprovado !!", 20, 160);
+  }
+  
+  //-------- Pergunta 1 ---------
+  if ( nivel==2 && ContPontos == 1){
+  tela = 5 ;
+  }
+      if ( tela==5 ) {
+    background(0);
+    textSize(15); 
+    fill(135,206,235);
+    text("Qual função tem o formato parecido com um dente ?", 20, 160);
+    text("a)x^2=0", 15, 320);
+    text("b)3x+5=0", 115, 320);
+    text("c)x^6-x^2=0", 215, 320);
+    text("d)x^8+3x=0", 315, 320);
+
+        if (keyIsDown(65)){
+        tela=3;
+          ContPontos++
+        }
+        if (keyIsDown(66)){
+        tela=3;
+          ContPontos++;
+        }
+        if (keyIsDown(67)){
+        tela=2;
+          ContPontos++;
+        }
+        if (keyIsDown(68)){
+        tela=3;
+          ContPontos++;
+        }
+  }
+  
+    //-------- Pergunta 2 ---------
+  if ( nivel==3 && ContPontos == 2){
+  tela = 6 ;
+  }
+      if ( tela==6 ) {
+    background(0);
+    textSize(15); 
+    fill(135,206,235);
+    text("pergunta", 20, 160);
+    text("a) ", 27, 320);
+    text("b) ", 127, 320);
+    text("c) ", 227, 320);
+    text("d) ", 327, 320);
+
+        if (keyIsDown(65)){
+        tela=2;
+          ContPontos++
+        }
+        if (keyIsDown(66)){
+        tela=3;
+          ContPontos++;
+        }
+        if (keyIsDown(67)){
+        tela=3;
+          ContPontos++;
+        }
+        if (keyIsDown(68)){
+        tela=3;
+          ContPontos++;
+        }
+  }
+  
+  //-------- Pergunta 3 ---------
+  if ( nivel==4 && ContPontos == 3){
+  tela = 7 ;
+  }
+      if ( tela==7 ) {
+    background(0);
+    textSize(15); 
+    fill(135,206,235);
+    text("Qual dessas não é um polinômio", 20, 160);
+    text("a)x^2=0", 15, 320);
+    text("b)3x+5=0", 115, 320);
+    text("c)x^6-x^2=0", 215, 320);
+    text("d)x^8+3x=0", 315, 320);
+
+        if (keyIsDown(65)){
+        tela=2;
+          ContPontos++
+        }
+        if (keyIsDown(66)){
+        tela=3;
+          ContPontos++;
+        }
+        if (keyIsDown(67)){
+        tela=3;
+          ContPontos++;
+        }
+        if (keyIsDown(68)){
+        tela=3;
+          ContPontos++;
+        }
+  }
+  
+  //-------- Pergunta 4 ---------
+  if ( nivel==5 && ContPontos == 4){
+  tela = 8 ;
+  }
+      if ( tela==8 ) {
+    background(0);
+    textSize(15); 
+    fill(135,206,235);
+    text("pergunta", 20, 160);
+    text("a) ", 27, 320);
+    text("b) ", 127, 320);
+    text("c) ", 227, 320);
+    text("d) ", 327, 320);
+
+        if (keyIsDown(65)){
+        tela=2;
+          ContPontos++
+        }
+        if (keyIsDown(66)){
+        tela=3;
+          ContPontos++;
+        }
+        if (keyIsDown(67)){
+        tela=3;
+          ContPontos++;
+        }
+        if (keyIsDown(68)){
+        tela=3;
+          ContPontos++;
+        }
+  }
+  
+    //-------- Pergunta 5 ---------
+  if ( nivel==6 && ContPontos == 5){
+  tela = 9 ;
+  }
+      if ( tela==9 ) {
+    background(0);
+    textSize(15); 
+    fill(135,206,235);
+    text("pergunta", 20, 160);
+    text("a) ", 27, 320);
+    text("b) ", 127, 320);
+    text("c) ", 227, 320);
+    text("d) ", 327, 320);
+
+        if (keyIsDown(65)){
+        tela=2;
+          ContPontos++
+        }
+        if (keyIsDown(66)){
+        tela=3;
+          ContPontos++;
+        }
+        if (keyIsDown(67)){
+        tela=3;
+          ContPontos++;
+        }
+        if (keyIsDown(68)){
+        tela=3;
+          ContPontos++;
+        }
+  }
+  if(keyIsDown(CONTROL)){
+  anima2 = imgsAndando[contFrame2];
+  image( anima2, xc, yc);
+  contFrame2++;
+  if ( contFrame2 > 3 ) {
+     contFrame2 = 0;  
+  }}
+
+}
