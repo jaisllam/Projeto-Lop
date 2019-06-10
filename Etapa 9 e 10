@@ -19,13 +19,15 @@ var nivel = 1; // Variável para nível
 var LimitePontos = 1000 //variável para mudança de Nível
 
 var anima; //Variavel para animação de abertura
-var anima2; 
-
+var anima2; //Variavel de movimentação do personagem
 var anima3; //Variavel para animação de finalização
+var anima4; //Variavel para animação de aprovação
+
+var imgsVitoria = []; // vetor para frames de vitoria
 var imgsAbertura = []; // vetor para frames de abertura
 var imgsFinal = []; // vetor para frames de finalização
 var imgsEstudante = [];
-var imgsAndando = [];
+var imgsAndando = [];// vetor para frames do Estudante
 var contFrame = 1; //contador de frames
 var contFrame2 = 0; 
 
@@ -45,11 +47,11 @@ x2 = 350; // posição do inimigo (vulgo prova), no eixo X
 y2= 200; // posição do inimigo (vulgo prova), no eixo Y
 raio1 = 20; // Variável para colisão da prova
 raio2 = 60;// Variável para colisão da prova
-xobj = []
-yobj = []
+xobj = [];
+yobj = [];
 for (var i=0; i <1; i++) {
-    xobj[i] = random (10,350)
-    yobj[i] = random (10,350)
+    xobj[i] = random (10,350);
+    yobj[i] = random (10,350);
 }
   
 for (i=0; i <enemy_quant; i++) { 
@@ -70,6 +72,10 @@ function preload() {
   imgAtaque = loadImage('Ataque.png');
   imgVidas = loadImage('vidas-2.png');
   imgsEstudante = loadImage("protagon_0.png");
+  
+   for(i=1; i<15; i++){
+  imgsVitoria[i] = loadImage("vitoria_"+i+".png");
+  }
   
   for(i=1; i<15; i++){
   imgsFinal[i] = loadImage("final_"+i+".png");
@@ -95,7 +101,7 @@ function draw() {
   if ( contFrame > 14 ) {
      contFrame = 1;
   }
-    fill(100);
+    fill(200);
 textSize(20);
 textStyle(BOLDITALIC);
 text('Pressione enter para começar', 50, 325);
@@ -112,10 +118,11 @@ text('By: Jaíslla Macêdo e Kaio Yuri', 5, 395);
   
 if (tela==2){
   background(0);
-  strokeWeight(0);
-textSize(20);
-textStyle(BOLDITALIC);
-text('Vidas', 10, 15);
+  strokeWeight(50);
+  textSize(20);
+  textStyle(BOLDITALIC);
+  fill(200);
+  text('Vidas', 10, 15);
   
     //-----quadrado que irá receber sprite de vida--------
   rect(1, 1, 1,1);
@@ -125,10 +132,10 @@ text(vidas, 30, 36);
     // -------- Criação de pontuação --------
   textSize(20);
 textStyle(BOLDITALIC);
-text('Pontuação', 300, 15);
+text('Pontuação', 290, 15);
     textSize(20);
 textStyle(BOLDITALIC);
-text(pontos, 300, 35);
+text(pontos, 290, 35);
     textSize(20);
 textStyle(BOLDITALIC);
 text('Prova', 150, 15);
@@ -177,7 +184,7 @@ text(nivel, 150, 35);
   fill(200);
   for (var i=0; i<enemy_quant; i++) {
   	//ellipse(xenemy[i], yenemy[i], 15, 15);
-    imageMode(CENTER)
+    imageMode(CENTER);
     image(imgAtaque, xenemy[i],yenemy[i])
   	yenemy[i]=yenemy[i]+enemyVel; 
     if ( yenemy[i] > 400 ){ 
@@ -218,8 +225,7 @@ if(aux >= 100 && n == 0){
   y = random(15, 350)
   n = 1
 }
-  
-//rect(x, y, 20, 20)
+ 
   imageMode(CENTER)
   image(imgVidas, x,y)
   if(dist(xc,yc,x,y)<=20){
@@ -231,7 +237,7 @@ if(aux >= 100 && n == 0){
   
   
   
-// ----------   lançamento de projeteis   --------------
+// ----------    Lançamento de projeteis   --------------
   if(keyIsDown(CONTROL) && tiro == false){
      xs = xc
      ys = yc
@@ -248,13 +254,12 @@ if(aux >= 100 && n == 0){
   }
   }
     
-    /*  */
+    
   fill(70)
-  //ellipse(x2, y2, 2*raio1, 2*raio2);
   imageMode(CENTER)
   image(imgProva, x2,y2)
   if(dist(xc,yc, x2,y2) <  raio1 + raio2){
-   vidas  = vidas - 1;
+   vidas  = vidas - 1; //comando correspondete a perda de vida
     xc = 30;
     yc = 350;
          }
@@ -266,6 +271,16 @@ if(aux >= 100 && n == 0){
   if (pontos>LimitePontos) {
     nivel=nivel+1;
     LimitePontos = LimitePontos + 1000; 
+  }
+  
+// Comando correspondente ao movimento do personagem
+  if(keyIsDown(CONTROL)){
+  anima2 = imgsAndando[contFrame2];
+  image( anima2, xc, yc);
+  contFrame2++;
+    if ( contFrame2 > 3 ) {
+       contFrame2 = 0;  
+    }
   }
 //criação da tela final quando a vida do personagem chegar a 0
 
@@ -281,24 +296,35 @@ if(aux >= 100 && n == 0){
   image( anima2, 200, 200);
   contFrame++;
   if ( contFrame > 14 ) {
-     contFrame = 1;
+       contFrame = 1;
     } 
     textSize(20);
-textStyle(BOLDITALIC);
-text('Pontuação final:', 50, 300);
+    textStyle(BOLDITALIC);
+    text('Pontuação final', 50, 300);
     textSize(20);
-textStyle(BOLDITALIC);
-text(pontos, 100, 330);
+    fill(200);
+    textStyle(BOLDITALIC);
+    text(pontos, 100, 330);
   }
   //----------- Tela de Vitória --------
     if ( ContPontos>5) {
      tela=4
     background(0);
-    textSize(30); 
-    fill(135,206,235);
-    text("Você foi Aprovado !!", 20, 160);
+    anima4 = imgsVitoria[contFrame];
+  image( anima4, 200, 200);
+  contFrame++;
+  if ( contFrame > 14 ) {
+     contFrame = 1;
+    }
+      
+    textSize(20);
+    textStyle(BOLDITALIC);
+    text('Pontuação final', 50, 300);
+    textSize(20);
+    fill(200);
+    textStyle(BOLDITALIC);
+    text(pontos, 100, 330);
   }
-  
   //-------- Pergunta 1 ---------
   if ( nivel==2 && ContPontos == 1){
   tela = 5 ;
@@ -330,7 +356,6 @@ text(pontos, 100, 330);
           ContPontos++;
         }
   }
-  
     //-------- Pergunta 2 ---------
   if ( nivel==3 && ContPontos == 2){
   tela = 6 ;
@@ -339,14 +364,15 @@ text(pontos, 100, 330);
     background(0);
     textSize(15); 
     fill(135,206,235);
-    text("pergunta", 20, 160);
-    text("a) ", 27, 320);
-    text("b) ", 127, 320);
-    text("c) ", 227, 320);
-    text("d) ", 327, 320);
+    text("Qual é resultado da simplificação do radical a seguir:", 10, 160);
+    text("4y^3/5x^2y^4", 150, 190);
+    text("a)4y ", 27, 320);
+    text("b)5x ", 127, 320);
+    text("c)4/5 ", 227, 320);
+    text("d)4/5x^2y ", 327, 320);
 
         if (keyIsDown(65)){
-        tela=2;
+        tela=3;
           ContPontos++
         }
         if (keyIsDown(66)){
@@ -358,11 +384,10 @@ text(pontos, 100, 330);
           ContPontos++;
         }
         if (keyIsDown(68)){
-        tela=3;
+        tela=2;
           ContPontos++;
         }
   }
-  
   //-------- Pergunta 3 ---------
   if ( nivel==4 && ContPontos == 3){
   tela = 7 ;
@@ -394,7 +419,6 @@ text(pontos, 100, 330);
           ContPontos++;
         }
   }
-  
   //-------- Pergunta 4 ---------
   if ( nivel==5 && ContPontos == 4){
   tela = 8 ;
@@ -403,14 +427,17 @@ text(pontos, 100, 330);
     background(0);
     textSize(15); 
     fill(135,206,235);
-    text("pergunta", 20, 160);
-    text("a) ", 27, 320);
-    text("b) ", 127, 320);
-    text("c) ", 227, 320);
-    text("d) ", 327, 320);
+    text("Quais funções abaixo tem concavidade para baixo:", 20, 150);
+    text("I. -2x^2+ 4x -5", 20, 170); 
+    text("II. 9x^2+7x+13", 20, 185);
+    text("III. -7x^2+8x+23", 20, 200);
+    text("a)I ", 27, 320);
+    text("b) II", 127, 320);
+    text("c) I e III", 227, 320);
+    text("d) NDA", 327, 320);
 
         if (keyIsDown(65)){
-        tela=2;
+        tela=3;
           ContPontos++
         }
         if (keyIsDown(66)){
@@ -418,7 +445,7 @@ text(pontos, 100, 330);
           ContPontos++;
         }
         if (keyIsDown(67)){
-        tela=3;
+        tela=2;
           ContPontos++;
         }
         if (keyIsDown(68)){
@@ -435,11 +462,12 @@ text(pontos, 100, 330);
     background(0);
     textSize(15); 
     fill(135,206,235);
-    text("pergunta", 20, 160);
-    text("a) ", 27, 320);
-    text("b) ", 127, 320);
-    text("c) ", 227, 320);
-    text("d) ", 327, 320);
+    text("Qual o resultado da equação exponencial:", 20, 160);
+        text("2^x-3+2^x-12^x = 52", 150, 190)
+    text("a) 5", 27, 320);
+    text("b) 8", 127, 320);
+    text("c) 3", 227, 320);
+    text("d) 14", 327, 320);
 
         if (keyIsDown(65)){
         tela=2;
@@ -458,12 +486,4 @@ text(pontos, 100, 330);
           ContPontos++;
         }
   }
-  if(keyIsDown(CONTROL)){
-  anima2 = imgsAndando[contFrame2];
-  image( anima2, xc, yc);
-  contFrame2++;
-  if ( contFrame2 > 3 ) {
-     contFrame2 = 0;  
-  }}
-
 }
